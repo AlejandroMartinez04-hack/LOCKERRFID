@@ -7,6 +7,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -41,5 +42,29 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * @return HasMany<TarjetaRfid, $this>
+     */
+    public function tarjetasRfid(): HasMany
+    {
+        return $this->hasMany(TarjetaRfid::class, 'usuario_id');
+    }
+
+    /**
+     * @return HasMany<AsignacionLocker, $this>
+     */
+    public function asignacionesLockers(): HasMany
+    {
+        return $this->hasMany(AsignacionLocker::class, 'usuario_id');
+    }
+
+    /**
+     * @return HasMany<LecturaRfid, $this>
+     */
+    public function lecturasRfid(): HasMany
+    {
+        return $this->hasMany(LecturaRfid::class, 'usuario_id');
     }
 }

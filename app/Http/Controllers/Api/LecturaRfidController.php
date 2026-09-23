@@ -3,48 +3,69 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreLecturaRfidRequest;
+use App\Http\Requests\UpdateLecturaRfidRequest;
+use App\Http\Resources\LecturaRfidResource;
+use App\Models\LecturaRfid;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
 class LecturaRfidController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
+    public function index(): AnonymousResourceCollection
     {
-        return response()->json();
+        $lecturas = LecturaRfid::with(['tarjetaRfid', 'usuario', 'locker', 'dispositivo'])
+            ->latest('fecha_hora')
+            ->get();
+
+        return LecturaRfidResource::collection($lecturas);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreLecturaRfidRequest $request): JsonResponse
     {
-        return response()->json();
+        $lectura = LecturaRfid::create($request->validated());
+
+        return (new LecturaRfidResource($lectura->load(['tarjetaRfid', 'usuario', 'locker', 'dispositivo'])))
+            ->response()
+            ->setStatusCode(201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id): JsonResponse
+    public function show(string $id): LecturaRfidResource
     {
-        return response()->json();
+        $lectura = LecturaRfid::with(['tarjetaRfid', 'usuario', 'locker', 'dispositivo'])->findOrFail($id);
+
+        return new LecturaRfidResource($lectura);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id): JsonResponse
+    public function update(UpdateLecturaRfidRequest $request, string $id): LecturaRfidResource
     {
-        return response()->json();
+        $lectura = LecturaRfid::findOrFail($id);
+        $lectura->update($request->validated());
+
+        return new LecturaRfidResource($lectura->load(['tarjetaRfid', 'usuario', 'locker', 'dispositivo']));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id): JsonResponse
+    public function destroy(string $id): Response
     {
-        return response()->json();
+        $lectura = LecturaRfid::findOrFail($id);
+        $lectura->delete();
+
+        return response()->noContent();
     }
 }

@@ -3,48 +3,67 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreAsignacionLockerRequest;
+use App\Http\Requests\UpdateAsignacionLockerRequest;
+use App\Http\Resources\AsignacionLockerResource;
+use App\Models\AsignacionLocker;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
 class AsignacionLockerController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
+    public function index(): AnonymousResourceCollection
     {
-        return response()->json();
+        $asignaciones = AsignacionLocker::with(['locker', 'usuario'])->get();
+
+        return AsignacionLockerResource::collection($asignaciones);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreAsignacionLockerRequest $request): JsonResponse
     {
-        return response()->json();
+        $asignacion = AsignacionLocker::create($request->validated());
+
+        return (new AsignacionLockerResource($asignacion->load(['locker', 'usuario'])))
+            ->response()
+            ->setStatusCode(201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id): JsonResponse
+    public function show(string $id): AsignacionLockerResource
     {
-        return response()->json();
+        $asignacion = AsignacionLocker::with(['locker', 'usuario'])->findOrFail($id);
+
+        return new AsignacionLockerResource($asignacion);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id): JsonResponse
+    public function update(UpdateAsignacionLockerRequest $request, string $id): AsignacionLockerResource
     {
-        return response()->json();
+        $asignacion = AsignacionLocker::findOrFail($id);
+        $asignacion->update($request->validated());
+
+        return new AsignacionLockerResource($asignacion->load(['locker', 'usuario']));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id): JsonResponse
+    public function destroy(string $id): Response
     {
-        return response()->json();
+        $asignacion = AsignacionLocker::findOrFail($id);
+        $asignacion->delete();
+
+        return response()->noContent();
     }
 }

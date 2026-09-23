@@ -3,48 +3,65 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreDispositivoRequest;
+use App\Http\Requests\UpdateDispositivoRequest;
+use App\Http\Resources\DispositivoResource;
+use App\Models\Dispositivo;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
 class DispositivoController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
+    public function index(): AnonymousResourceCollection
     {
-        return response()->json();
+        return DispositivoResource::collection(Dispositivo::all());
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreDispositivoRequest $request): JsonResponse
     {
-        return response()->json();
+        $dispositivo = Dispositivo::create($request->validated());
+
+        return (new DispositivoResource($dispositivo))
+            ->response()
+            ->setStatusCode(201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id): JsonResponse
+    public function show(string $id): DispositivoResource
     {
-        return response()->json();
+        $dispositivo = Dispositivo::findOrFail($id);
+
+        return new DispositivoResource($dispositivo);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id): JsonResponse
+    public function update(UpdateDispositivoRequest $request, string $id): DispositivoResource
     {
-        return response()->json();
+        $dispositivo = Dispositivo::findOrFail($id);
+        $dispositivo->update($request->validated());
+
+        return new DispositivoResource($dispositivo);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id): JsonResponse
+    public function destroy(string $id): Response
     {
-        return response()->json();
+        $dispositivo = Dispositivo::findOrFail($id);
+        $dispositivo->delete();
+
+        return response()->noContent();
     }
 }
