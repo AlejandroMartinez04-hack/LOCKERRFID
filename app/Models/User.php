@@ -45,6 +45,16 @@ class User extends Authenticatable
         ];
     }
 
+    public function isAdmin(): bool
+    {
+        return $this->rol === 'admin';
+    }
+
+    public function isUsuario(): bool
+    {
+        return $this->rol === 'usuario';
+    }
+
     /**
      * @return HasMany<TarjetaRfid, $this>
      */
