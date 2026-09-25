@@ -1,0 +1,9 @@
+<script setup lang="ts">
+import LockerCard from '../components/LockerCard.vue';
+import StatCard from '../components/StatCard.vue';
+import type { Locker, Reading, User } from '../data/mockData';
+defineProps<{ currentUser: User; lockers: Locker[]; readings: Reading[]; stats: { label: string; value: number; icon: string; tone: string }[] }>();
+const emit = defineEmits<{ navigate: [view: string]; locker: [locker: Locker] }>();
+</script>
+
+<template><div class="welcome-row"><div><span class="eyebrow">RESUMEN OPERATIVO / 25 SEP 2026</span><h2>Buenos días, {{ currentUser.name.split(' ')[0] }}.</h2><p>Aquí tienes una vista general del sistema de lockers.</p></div><button class="outline-button" @click="emit('navigate', 'simulator')">◎ Abrir simulador RFID</button></div><div class="stats-grid"><StatCard v-for="stat in stats" :key="stat.label" v-bind="stat" /></div><div class="dashboard-grid"><section class="panel"><div class="panel-heading"><div><span class="eyebrow">MONITOREO EN TIEMPO REAL</span><h3>Estado de lockers</h3></div><button class="text-button" @click="emit('navigate', 'lockers')">Ver todos →</button></div><div class="locker-grid"><LockerCard v-for="locker in lockers" :key="locker.id" :locker="locker" :occupant="locker.estado === 'ocupado' ? (locker.numero === '02' ? 'Carlos Mendoza' : 'María Fernández') : undefined" @select="emit('locker', $event)" /></div></section><section class="panel readings-panel"><div class="panel-heading"><div><span class="eyebrow">ACTIVIDAD RECIENTE</span><h3>Últimas lecturas</h3></div><button class="text-button" @click="emit('navigate', 'readings')">Ver historial →</button></div><div v-for="reading in readings.slice(0, 3)" :key="reading.fecha" class="reading-row"><span class="reading-status" :class="reading.resultado"></span><div><strong>{{ reading.uid }}</strong><small>{{ reading.usuario }} · {{ reading.locker }}</small></div><time>{{ reading.fecha.split(' ')[1] }}</time></div></section></div></template>
