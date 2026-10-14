@@ -5,11 +5,13 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DispositivoController;
 use App\Http\Controllers\Api\LecturaRfidController;
 use App\Http\Controllers\Api\LockerController;
+use App\Http\Controllers\Api\RfidAccessController;
 use App\Http\Controllers\Api\TarjetaRfidController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/rfid/validar', [RfidAccessController::class, 'validateAccess']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);

@@ -22,7 +22,6 @@ class DispositivoResource extends JsonResource
             'id' => $this->id,
             'nombre' => $this->nombre,
             'ubicacion' => $this->ubicacion,
-            'token' => $this->token,
             'estado' => $this->estado,
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),
